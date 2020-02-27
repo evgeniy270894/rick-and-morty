@@ -1,9 +1,13 @@
 import React, { FC } from "react";
+import { Layout } from "./components/Layout";
+import { PhotoCardsList } from "./containers/PhotoCardsList";
 
-export interface IAppProps {}
-
-const App: FC<IAppProps> = props => {
-  return <div>START</div>;
+const App: FC = () => {
+  return (
+    <Layout>
+      <PhotoCardsList />
+    </Layout>
+  );
 };
 
 export { App };
