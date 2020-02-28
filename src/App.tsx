@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { Layout } from "./components/Layout";
-import { PhotoCardsList } from "./containers/PhotoCardsList";
+import { MainWidget } from "./containers/MainWidget";
 
 const App: FC = () => {
   return (
     <Layout>
-      <PhotoCardsList />
+      <MainWidget />
     </Layout>
   );
 };

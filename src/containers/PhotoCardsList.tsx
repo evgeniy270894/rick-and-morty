@@ -1,93 +1,40 @@
-import React, { FC, useEffect, useState } from "react";
-import { useLazyQuery, QueryLazyOptions } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
-import Skeleton from '@material-ui/lab/Skeleton';
-import debounce from "lodash/debounce";
-import { ICharacters, ICharacter } from "../types";
+import React, { FC } from "react";
+import { ICharacter } from "../types";
 import { PhotoCard } from "../components/PhotoCard";
-import { StyledPhotoListContainer, SearchField } from "../styles";
+import { REMOVE_CHARACTER, CHOOSE_CHARACTER } from "../queryes";
+import { useMutation } from "@apollo/react-hooks";
 
-export interface IPhotoCardsListProps {}
+export interface IPhotoCardsListProps {
+  characters: ICharacter[];
+}
 
-type TFetchDataMethod = (options: QueryLazyOptions<{ name?: string }>) => void;
-type TVariables = {name: string};
+type TRemoveCardVars = { id: string };
 
-const GET_CHARACTERS_LIST = gql`
-  query GetCharacters($name: String!) {
-    characters(filter: { name: $name }) {
-      results {
-        id
-        name
-        image
-      }
-    }
-  }
-`;
+const PhotoCardsList: FC<IPhotoCardsListProps> = ({ characters }) => {
+  const [removeCard] = useMutation<TRemoveCardVars, TRemoveCardVars>(
+    REMOVE_CHARACTER
+  );
 
-let debouncedFetchData: (
-  method: TFetchDataMethod,
-  vars: TVariables
-) => void;
+  const [chooseCard] = useMutation<ICharacter, ICharacter>(CHOOSE_CHARACTER);
 
-const PhotoCardsList: FC<IPhotoCardsListProps> = () => {
-  const [value, setValue] = useState<string>("");
-  const [fetchData, { data, loading, error }] = useLazyQuery<
-    ICharacters,
-    { name?: string }
-  >(GET_CHARACTERS_LIST);
-
-  useEffect(() => {
-    debouncedFetchData = debounce(
-      (method: TFetchDataMethod, vars: TVariables) => {
-        if (vars.name.length > 1 || vars.name.length === 0) {
-          method({
-            variables: vars
-          });
-        }
-      },
-      300
-    );
-    fetchData({
-      variables: { name: value }
-    });
-  }, []);
-
-  const handleSearchChange = ({
-    target: { value }
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(value);
-    debouncedFetchData(fetchData, { name: value });
+  const handleRemoveCard = (id: string) => () => {
+    removeCard({ variables: { id } });
   };
 
-  const renderLoadingContent = () => {
-    return new Array(8).fill(null).map((_, i) => (
-      <Skeleton animation="pulse" variant="rect" width={180} height={240}/>
-    ))
+  const handleChooseCard = (character: ICharacter) => () => {
+    chooseCard({ variables: { ...character } });
   };
 
   return (
     <>
-      <SearchField
-        placeholder="Search"
-        value={value}
-        onChange={handleSearchChange}
-      />
-      <StyledPhotoListContainer>
-        {loading ? (
-          <h1>Loading...</h1>
-        ) : error ? (
-          <h1>{`Error: ${error?.message}`}</h1>
-        ) : (
-          data?.characters?.results?.slice(0, 8).map(({ id, image }: ICharacter) => (
-            <PhotoCard
-              key={id}
-              onClick={() => console.log(`===== CLICK =====>`, id)}
-              src={image}
-              onClose={() => console.log(`===== CLOSE =====>`, id)}
-            />
-          ))
-        )}
-      </StyledPhotoListContainer>
+      {characters.map(item => (
+        <PhotoCard
+          key={item.id}
+          onClick={handleChooseCard(item)}
+          src={item.image}
+          onClose={handleRemoveCard(item.id)}
+        />
+      ))}
     </>
   );
 };

@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface ICharacter {
   id: string,
   name: string,
@@ -9,3 +11,17 @@ export interface ICharacters {
     results: ICharacter[] | null
   }
 }
+
+
+export type TRemovedCharacter = {
+  id: string
+}
+
+export interface IClientState {
+  removedCharacters: TRemovedCharacter[];
+  rick: string;
+  morty: string;
+}
+
+export type TNameVariables = { name: string };
+export type Event = React.ChangeEvent<HTMLInputElement>;

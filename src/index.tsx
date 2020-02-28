@@ -10,26 +10,27 @@ const cache = new InMemoryCache({});
 const client = new ApolloClient({
   uri: "https://rickandmortyapi.com/graphql",
   cache: cache,
-  clientState: {
-    defaults: {
-      removedItems: [
-        // {
-        //   id: null,
-        //   __typename: "deletedCard"
-        // }
-      ]
-      // rickSlot: {
-      //   name: "",
-      //   image: ""
-      // },
-      // mortySlot: {
-      //   name: "",
-      //   image: ""
-      // }
-    },
-    resolvers: resolvers
-  }
+  resolvers,
 });
+
+const data = {
+  removedCharacters: [],
+  RickCard: {
+    id: "",
+    name: "",
+    image: "",
+    __typename: "RickCard"
+  },
+  MortyCard: {
+    id: "",
+    name: "",
+    image: "",
+    __typename: "MortyCard"
+  }
+};
+
+cache.writeData({ data });
+
 ReactDOM.render(
   <ApolloProvider client={client}>
     <App />

@@ -1,48 +1,62 @@
-import { ApolloCache } from 'apollo-cache';
-import { Resolvers } from 'apollo-client'
-
-// export const typeDefs = gql`
-//     extend type Query {
-//         isLoggedIn: Boolean!
-//         cartItems: [ID!]!
-//     }
-//
-//     extend type Launch {
-//         isInCart: Boolean!
-//     }
-//
-//     extend type Mutation {
-//         addOrRemoveFromCart(id: ID!): [ID!]!
-//     }
-// `;
+import { ApolloCache } from "apollo-cache";
+import { Resolvers } from "apollo-client";
+import { GET_DELETED_CARDS } from "./queryes";
+import { IClientState } from "./types";
 
 type ResolverFn = (
   parent: any,
-  args: any,
-  { cache } : { cache: ApolloCache<any> }
+  args: Record<string, any>,
+  { cache }: { cache: ApolloCache<IClientState> }
 ) => any;
 
 interface ResolverMap {
   [field: string]: ResolverFn;
 }
 
-interface AppResolvers extends Resolvers {
-  // We will update this with our app's resolvers later
-}
-
-
-// type defs and other previous variable declarations
+interface AppResolvers extends Resolvers {}
 
 interface AppResolvers extends Resolvers {
-  Launch: ResolverMap;
   Mutation: ResolverMap;
 }
 
 export const resolvers: AppResolvers = {
-  Launch: {
-
-  },
   Mutation: {
-  }
+    removeCharacter: (_, { id }, { cache }) => {
+      const result = cache.readQuery<IClientState>({
+        query: GET_DELETED_CARDS
+      });
+      const removedCharacters = [
+        ...(result?.removedCharacters || []),
+        { id, __typename: "removedCharacters" }
+      ];
+      cache.writeData({
+        data: {
+          removedCharacters
+        }
+      });
+      return removedCharacters;
+    },
+    chooseCharacter: (_, { id, name, image }, { cache }) => {
+      debugger;
+      name = name.toLowerCase();
+      const character = name.includes("rick")
+        ? "RickCard"
+        : name.includes("morty")
+        ? "MortyCard"
+        : null;
 
+      if (character) {
+        const data = {
+          [character]: {
+            id,
+            name,
+            image,
+            __typename: character
+          }
+        };
+        cache.writeData({ data });
+        return data;
+      }
+    }
+  }
 };
