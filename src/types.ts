@@ -1,21 +1,26 @@
 import React from "react";
 
 export interface ICharacter {
-  id: string,
-  name: string,
-  image: string
+  id: string;
+  name: string;
+  image: string;
 }
 
 export interface ICharacters {
   characters: {
-    results: ICharacter[] | null
-  }
+    results: ICharacter[] | null;
+    info: {
+      count: number;
+      pages: number;
+      next: number;
+      prev: number;
+    };
+  };
 }
-
 
 export type TRemovedCharacter = {
-  id: string
-}
+  id: string;
+};
 
 export interface IClientState {
   removedCharacters: TRemovedCharacter[];

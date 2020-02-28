@@ -37,7 +37,6 @@ export const resolvers: AppResolvers = {
       return removedCharacters;
     },
     chooseCharacter: (_, { id, name, image }, { cache }) => {
-      debugger;
       name = name.toLowerCase();
       const character = name.includes("rick")
         ? "RickCard"

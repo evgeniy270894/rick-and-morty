@@ -1,18 +1,14 @@
 import { gql } from "apollo-boost";
 
-// export const typeDefs = gql`
-//
-// `;
-
-// #  type Character {
-//   #    id: ID!
-//   #    name: String!
-//   #    image: String!
-//   #  }
-
 export const GET_CHARACTERS_LIST = gql`
-  query GetCharacters($name: String!) {
-    characters(filter: { name: $name }) {
+  query GetCharacters($name: String!, $page: Int) {
+    characters(filter: { name: $name }, page: $page) {
+      info {
+        count
+        pages
+        next
+        prev
+      }
       results {
         id
         name
