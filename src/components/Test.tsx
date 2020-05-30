@@ -16,6 +16,9 @@ const PhotoCard: FC<IPhotoCardProps> = ({ onClick, onClose, src }) => {
     <StyledPhotoCardContainer>
       <StyledCloseButton onClick={onClose}/>
       <StyledPhotoCard onClick={onClick} src={src} />
+      <StyledPhotoCard onClick={onClick} src={src} />
+      <StyledPhotoCard onClick={onClick} src={src} />
+      <StyledPhotoCard onClick={onClick} src={src} />
     </StyledPhotoCardContainer>
   );
 };
