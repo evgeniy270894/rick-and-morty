@@ -8,6 +8,7 @@ const Layout: FC<ILayoutProps> = ({ children }) => {
   return (
     <StyledLayout>
       <Container>{children}</Container>
+      <div>TEST</div>
     </StyledLayout>
   );
 };
